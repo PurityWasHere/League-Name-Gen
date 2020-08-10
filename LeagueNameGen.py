@@ -183,7 +183,7 @@ def SendName():
 
 def init():
     global fontsetting,savename,NameToSend,proxychoice
-    choice = input('Please Select What option you want\n1)Name Sniper based off input')
+    choice = input('Please Select What option you want\n1)Name Sniper based off input\nEnter Choice: ')
     if choice == '1':
         proxychoice = input('What Type of proxies would you like to use?\n1)HTTP\n2)Socks4\n3)Socks5\nEnter Choice: ')
         fontsetting = input('1)All lower case\n2)All cap\n3)No Preferance?\nEnter Choice: ')
