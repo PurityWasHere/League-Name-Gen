@@ -5,8 +5,7 @@ savename = ''
 hits = []
 fontsetting = ''
 proxychoice = ''
-regions = ['NA', 'OCE', 'TR', 'RU', 'LAS',
-           'LAN', 'KR', 'JP', 'EUW', 'EUNE', 'BR']
+regions = ['NA', 'OCE', 'TR', 'RU', 'LAS','LAN', 'KR', 'JP', 'EUW', 'EUNE', 'BR']
 region = ''
 
 
@@ -182,30 +181,37 @@ def SendName():
         proxy = ProxyManager.socks5
     randomname = usergen(NameToSend)
     ProxyManager.RefreshProxy()
-
-    r = requests.get('https://lolnames.gg/en/'+region+'/' +
-                     randomname+'/', proxies=proxy, timeout=10)
-    if ('class="text-center">'+randomname+' is available!</h4>') in r.content.decode():
-        print('HIT | {}'.format(randomname))
-        with io.open(savename + '_' + region+'_Hits.txt', "a", encoding="utf-8") as f:
-            f.write(randomname + '\n')
-    elif ('class="text-center">'+randomname+' is available!</h4>') not in r.content.decode():
-        print('FAIL | {}'.format(randomname))
-
+    if region == 'ALL':
+        for x in regions:
+            r = requests.get('https://lolnames.gg/en/'+x+'/' +randomname+'/', proxies=proxy, timeout=10)
+            if ('class="text-center">'+randomname+' is available!</h4>') in r.content.decode():
+                print('HIT | {}'.format(randomname))
+                with io.open(savename + '_' +x+'_Hits.txt', "a", encoding="utf-8") as f:
+                    f.write(randomname + '\n')
+            elif ('class="text-center">'+randomname+' is available!</h4>') not in r.content.decode():
+                print('FAIL | {}'.format(randomname))
+    else:
+        r = requests.get('https://lolnames.gg/en/'+region+'/' +randomname+'/', proxies=proxy, timeout=10)
+        if ('class="text-center">'+randomname+' is available!</h4>') in r.content.decode():
+            print('HIT | {}'.format(randomname))
+            with io.open(savename + '_' +region+'_Hits.txt', "a", encoding="utf-8") as f:
+                f.write(randomname + '\n')
+        elif ('class="text-center">'+randomname+' is available!</h4>') not in r.content.decode():
+            print('FAIL | {}'.format(randomname))
 
 def init():
     global fontsetting, savename, NameToSend, proxychoice, regions, region
     choice = input(
         'Please Select What option you want\n1)Name Sniper based off input\nEnter Choice: ')
     if choice == '1':
-        proxychoice = input(
-            'What Type of proxies would you like to use?\n1)HTTP\n2)Socks4\n3)Socks5\nEnter Choice: ')
-        fontsetting = input(
-            '1)All lower case\n2)All cap\n3)No Preferance?\nEnter Choice: ')
-        region = input(
-            'What Region would you like to check?\n1)NA\n2)OCE\n3)TR\n4)RU\n5)LAS\n6)LAN\n7)KR\n8)JP\n9)EUW\n10)EUNE\n11)BR\nSelection: ')
-        region = int(region) - 1
-        region = regions[region]
+        proxychoice = input('What Type of proxies would you like to use?\n1)HTTP\n2)Socks4\n3)Socks5\nEnter Choice: ')
+        fontsetting = input('1)All lower case\n2)All cap\n3)No Preferance?\nEnter Choice: ')
+        region = input('What Region would you like to check?\n1)NA\n2)OCE\n3)TR\n4)RU\n5)LAS\n6)LAN\n7)KR\n8)JP\n9)EUW\n10)EUNE\n11)BR\n12)All\nSelection: ')
+        if region == '12':
+            region = 'ALL'
+        else:
+            region = int(region) - 1
+            region = regions[region]
         checkcount = input('Number of codes to check: ')
         maxthreads = input('Maximum concurrent threads: ')
         NameToSend = input('Please Enter Name with spaces (ex: t e s t): ')
