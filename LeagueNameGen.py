@@ -5,6 +5,8 @@ savename = ''
 hits = []
 fontsetting = ''
 proxychoice = ''
+regions = ['NA','OCE','TR','RU','LAS','LAN','KR','JP','EUW','EUNE','BR']
+region = ''
 
 def usergen(nameinput):
     global fontsetting
@@ -14,17 +16,17 @@ def usergen(nameinput):
     bl = ['b','B','ƀ','Ɓ','Ƃ','ƃ','Ƅ','ƅ']
     cl = ['c','C','ç','Ć','ć','Ĉ','ĉ','Ċ','ċ','Č','č','Ɔ','Ƈ','ƈ','Ȼ','ȼ']
     dl = ['d','D','Ď','ď','Đ','đ','Ḋ','Ƿ']
-    el = ['e','E','£','È','É','Ë','è','é','ê','ë','Ê']
+    el = ['e','E','£','È','É','Ë','è','é','ê','ë','Ê','3']
     fl = ['f','F','ƒ','Ƒ']
     gl = ['g','G','Ĝ','ĝ','ğ','Ġ','ġ']
     hl = ['h','H','Ĥ','ĥ','Ħ','ħ','Ȟ']
-    il = ['i','I','ɉ','ŀ','ľ']
+    il = ['i','I','ɉ','ŀ','ľ','1']
     jl = ['j','J','ǰ','ȷ','ɉ','Ɉ']
     kl = ['k','K','Ķ','ķ','ĸ','Ƙ','ƙ']
-    ll = ['l','L','Ì','Í','Ï','Ĳ','Ĵ','ƪ','ȴ']
+    ll = ['l','L','Ì','Í','Ï','Ĳ','Ĵ','ƪ','ȴ','1']
     ml = ['m','M','Ħ']
     nl = ['n','N','ñ','Ń','ń','ņ','Ņ','ň','ŉ','Ŋ']
-    ol = ['o','O','Ō','ō','Ŏ','Ő','Œ','Ɵ','ơ','Ʊ','Ǒ','Ǫ']
+    ol = ['o','O','Ō','ō','Ŏ','Ő','Œ','Ɵ','ơ','Ʊ','Ǒ','Ǫ','0']
     pl = ['p','P','þ','ƥ','ƿ']
     ql = ['q','Q','Ǫ','ǫ','Ǭ','ǭ']
     rl = ['r','R','Ŕ','Ŗ','Ř','ř','ŗ','Ʀ']
@@ -157,8 +159,10 @@ def usergen(nameinput):
         return plain_text_name.upper()
     elif fontsetting == '3':
         return plain_text_name
+
+
 def SendName():
-    global savename, hits,proxychoice
+    global savename, hits,proxychoice,region
     if proxychoice == '1':
         ProxyManager.GrabProxiesHTTP('proxies.txt')
         ProxyManager.RefreshProxy()
@@ -173,20 +177,25 @@ def SendName():
         proxy = ProxyManager.socks5
     randomname = usergen(NameToSend)
     ProxyManager.RefreshProxy()
-    r = requests.get('https://lolnames.gg/en/na/'+randomname+'/' , proxies = proxy,timeout = 10)
+
+    r = requests.get('https://lolnames.gg/en/'+region+'/'+randomname+'/' , proxies = proxy,timeout = 10)
     if ('class="text-center">'+randomname+' is available!</h4>') in r.content.decode():
         print('HIT | {}'.format(randomname))
-        with io.open(savename + '_Hits.txt', "a", encoding="utf-8") as f:
+        with io.open(savename +'_' + region+'_Hits.txt', "a", encoding="utf-8") as f:
             f.write(randomname + '\n')
     elif ('class="text-center">'+randomname+' is available!</h4>') not in r.content.decode():
         print('FAIL | {}'.format(randomname))
 
+
 def init():
-    global fontsetting,savename,NameToSend,proxychoice
+    global fontsetting,savename,NameToSend,proxychoice,regions,region
     choice = input('Please Select What option you want\n1)Name Sniper based off input\nEnter Choice: ')
     if choice == '1':
         proxychoice = input('What Type of proxies would you like to use?\n1)HTTP\n2)Socks4\n3)Socks5\nEnter Choice: ')
         fontsetting = input('1)All lower case\n2)All cap\n3)No Preferance?\nEnter Choice: ')
+        region = input('What Region would you like to check?\n1)NA\n2)OCE\n3)TR\n4)RU\n5)LAS\n6)LAN\n7)KR\n8)JP\n9)EUW\n10)EUNE\n11)BR\nSelection: ')
+        region = int(region) - 1
+        region = regions[region]
         checkcount = input('Number of codes to check: ')
         maxthreads = input('Maximum concurrent threads: ')
         NameToSend = input('Please Enter Name with spaces (ex: t e s t): ')
